@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from get_weather import get_weather, kelvin_to_celsius, get_discomfort_index
+from weather import kelvin_to_celsius, get_discomfort_index, get_weather
 from device import *
 
 # 통합시스템
@@ -10,20 +10,35 @@ def homeIOT():
     current_time = datetime.now()
     current_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
     current_logs = []
+    result = {}
     
     try:
-        # current_home_log = {'datetime': current_time, 'device': '', 'msg': ''}
         light = set_light(current_weather['cloud'])
-        print(f"{current_time} device: 조명 {light['status']} {light['msg']}")
+        light_log = f"{current_time} device: 조명 {light['status']} {light['msg']}"
+        current_logs.append(light_log)
+
         air_con = air_conditioner(current_weather['c_temp'])
-        print(f"{current_time} device: 에어컨 {air_con['status']} {air_con['msg']}")
+        air_conditioner_log = f"{current_time} device: 에어컨 {air_con['status']} {air_con['msg']}"
+        current_logs.append(air_conditioner_log)
+        
         hum = dehumidifier(current_weather['humidity'])
-        print(f"{current_time} device: 제습기 {hum['status']} {hum['msg']}")
+        hum_log = f"{current_time} device: 제습기 {hum['status']} {hum['msg']}"
+        current_logs.append(hum_log)
+        
         purif = purifier(35, 15)
-        print(f"{current_time} device: 공기청정기 {purif['status']} {purif['msg']}")
+        purif_log = f"{current_time} device: 공기청정기 {purif['status']} {purif['msg']}"
+        current_logs.append(purif_log)
+        
         mp = music_player(current_weather['cloud'])
-        print(f"{current_time} device: 음악플레이어 {mp['status']} {mp['msg']}")
+        mp_log = f"{current_time} device: 음악플레이어 {mp['status']} {mp['msg']}"
+        current_logs.append(mp_log)
+        result['code'] = True
+    
     except Exception as e:
         print("에러 발생! :", e)
-        return False
-    return True
+        error_log = f"{current_time} {str(e)}"
+        current_logs.append(error_log)
+        result['code'] = False
+        
+    result['logs'] = current_logs
+    return result
