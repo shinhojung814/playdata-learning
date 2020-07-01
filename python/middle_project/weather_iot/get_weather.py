@@ -6,8 +6,7 @@ code: 요청 성공 여부
 c_temp: 섭씨 온도
 humidity: 습도
 discomfort_index: 불쾌지수
-: 명도는 구름량으로 대체
-: 미세먼지
+cloud: 명도는 구름량으로 대체
 """
 
 import requests
@@ -32,10 +31,6 @@ def get_weather():
         result['humidity'] = res['main']['humidity']
         result['discomfort_index'] = get_discomfort_index(result['c_temp'], result['humidity'])
         result['cloud'] = res['clouds']['all']
-        result['particulate_matter'] = 20
     else:
         result["code"] = False
     return result
-
-if __name__ == "__main__":
-    print(get_weather())
